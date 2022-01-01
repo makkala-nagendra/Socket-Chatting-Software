@@ -17,6 +17,7 @@ class WriteIP {
     // Enter string ="Ip1, Ip2, Ip3, Ip4,.........., IPn"
     String s = "localhost";
 
+    // It is for write Users IP's List
     WriteIP() throws IOException {
         File file = new File("usersIPAddress.txt");
         FileWriter writer = new FileWriter(file);
@@ -49,17 +50,16 @@ class MySocketChattingSoftware {
     JFrame mainFrame;
     int minPortID = 49152;
 
+    // Creating Interface
     interface myInterface {
         void connect();
-
         void disConnect();
-
         void sendMessage();
     }
 
     MySocketChattingSoftware() {
+        // Reading the Users IP & PortNumber usersIPAddress.txt
         try {
-
             File file = new File("usersIPAddress.txt");
             if (!file.exists()) {
                 WriteIP writeIP = new WriteIP();
@@ -73,21 +73,20 @@ class MySocketChattingSoftware {
         } catch (Exception e) {
             System.out.println(e);
         }
-
+        // Main Frame
         mainFrame = new JFrame("My Chating Software");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Users List
+        // Users IP&PortNumber List
         for (int i = 0; i < usersIPList.size(); i++) {
             JPanel jp = myChatBoxContainer(i, usersIPList.get(i).ipAddress, usersIPList.get(i).portNumber);
             minPortID++;
             usersChat.add(jp);
         }
-
+        // Main Chat Box
         chatBox = usersChat.get(0);
-
         for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
             JButton userIPButton = new JButton(usersIPList.get(i).ipAddress + " " + usersIPList.get(i).portNumber);
