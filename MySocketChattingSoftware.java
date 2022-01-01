@@ -11,7 +11,38 @@ import java.io.*;
 import javax.swing.border.*;
 import java.net.*;
 
+class WriteIP {
+    int minPortID = 49152;
+    //IP = 000.000.0.00
+    // Enter string ="Ip1, Ip2, Ip3, Ip4,.........., IPn"
+    String s = "localhost";
+
+    WriteIP() throws IOException {
+        File file = new File("usersIPAddress.txt");
+        FileWriter writer = new FileWriter(file);
+        String[] str = s.split(", ");
+        for (int i = 0; i < str.length; i++) {
+            writer.write(str[0] + " " + minPortID + "\n");
+            writer.flush();
+            minPortID++;
+        }
+        writer.close();
+    }
+
+}
+
+class Users {
+    String ipAddress;
+    int portNumber;
+
+    Users(String ip, int i) {
+        this.ipAddress = ip;
+        this.portNumber = i;
+    }
+}
+
 class MySocketChattingSoftware {
+    ArrayList<Users> usersIPList = new ArrayList<Users>();
     private ArrayList<JPanel> usersChat = new ArrayList<JPanel>();
     private ArrayList<JButton> usersButtonList = new ArrayList<JButton>();
     JPanel chatBox;
@@ -27,25 +58,39 @@ class MySocketChattingSoftware {
     }
 
     MySocketChattingSoftware() {
+        try {
+
+            File file = new File("usersIPAddress.txt");
+            if (!file.exists()) {
+                WriteIP writeIP = new WriteIP();
+                System.out.println("Users File created");
+            }
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String st;
+            while ((st = br.readLine()) != null) {
+                usersIPList.add(new Users(st.split(" ")[0], Integer.parseInt(st.split(" ")[1])));
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
         mainFrame = new JFrame("My Chating Software");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // Users List
-        for (int i = 0; i < 10; i++) {
-            JPanel jp = myChatBoxContainer(i, "localhost", minPortID);
+        for (int i = 0; i < usersIPList.size(); i++) {
+            JPanel jp = myChatBoxContainer(i, usersIPList.get(i).ipAddress, usersIPList.get(i).portNumber);
             minPortID++;
             usersChat.add(jp);
         }
 
         chatBox = usersChat.get(0);
-        System.out.println(usersChat.size());
 
-        minPortID = 49152;
-        for (int i = 0; i < usersChat.size(); i++) {
+        for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
-            JButton userIPButton = new JButton("localhost :" + minPortID);
+            JButton userIPButton = new JButton(usersIPList.get(i).ipAddress + " " + usersIPList.get(i).portNumber);
             userIPButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent event) {
                     mainFrame.remove(chatBox);
@@ -53,7 +98,6 @@ class MySocketChattingSoftware {
                     mainFrame.add(chatBox, BorderLayout.CENTER);
                     mainFrame.validate();
                     mainFrame.repaint();
-                    System.out.println(j);
                 }
             });
             usersButtonList.add(userIPButton);
@@ -333,7 +377,7 @@ class MySocketChattingSoftware {
         chatBoxJPanel.add(bottomBar, BorderLayout.SOUTH);
         return chatBoxJPanel;
     }
-    
+
     public static void main(String args[]) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
