@@ -333,32 +333,7 @@ class MySocketChattingSoftware {
         chatBoxJPanel.add(bottomBar, BorderLayout.SOUTH);
         return chatBoxJPanel;
     }
-
-    public JPanel bottomBarContainer() {
-        JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(91, 154, 212));
-        bottomBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        JTextArea textArea = new JTextArea(3, 60);
-        textArea.setLineWrap(true);
-        textArea.setEditable(true);
-        textArea.setVisible(true);
-        JScrollPane scroll = new JScrollPane(textArea);
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        JButton jButton = new JButton(" Send ");
-        jButton.setBounds(50, 100, 95, 30);
-        jButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (textArea.getText() != "" && textArea.getText() != " ")
-                    System.out.println(textArea.getText());
-                // serverWriterSender();
-            }
-        });
-        bottomBar.add(scroll);
-        bottomBar.add(jButton);
-        return bottomBar;
-    }
-
+    
     public static void main(String args[]) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
