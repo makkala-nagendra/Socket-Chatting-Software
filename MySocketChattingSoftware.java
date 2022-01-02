@@ -13,7 +13,7 @@ import java.net.*;
 
 class WriteIP {
     int minPortID = 49152;
-    //IP = 000.000.0.00
+    // IP = 000.000.0.00
     // Enter string ="Ip1, Ip2, Ip3, Ip4,.........., IPn"
     String s = "localhost";
 
@@ -53,7 +53,9 @@ class MySocketChattingSoftware {
     // Creating Interface
     interface myInterface {
         void connect();
+
         void disConnect();
+
         void sendMessage();
     }
 
@@ -74,7 +76,7 @@ class MySocketChattingSoftware {
             System.out.println(e);
         }
         // Main Frame
-        mainFrame = new JFrame("My Chating Software");
+        mainFrame = new JFrame("My Chating Software Build by M.Nagendra");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,7 +144,7 @@ class MySocketChattingSoftware {
 
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(91, 154, 212));
-        bottomBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        bottomBar.setLayout(new FlowLayout(FlowLayout.LEFT));
         JTextArea textArea = new JTextArea(3, 60);
         textArea.setLineWrap(true);
         textArea.setEditable(true);
@@ -184,7 +186,8 @@ class MySocketChattingSoftware {
             };
 
             public void sendMessage() {
-                serverWriterSender();
+                if (socket != null)
+                    serverWriterSenderMessage();
             }
 
             Thread connectionThreadCode() {
@@ -207,8 +210,26 @@ class MySocketChattingSoftware {
                             }
                         } catch (Exception ex) {
                             System.out.println(ex);
-                            serverFlag = true;
-                            connectionJLabel.setText("Try again to connecte... " + portID);
+                            serverFlag = !serverFlag;
+                            // connectionJLabel.setText("Try again to connecte... " + portID);
+                            try {
+                                if (serverFlag == true) {
+                                    serverSocket = new ServerSocket(portID);
+                                    connectionJLabel.setText("Waiting for connect to the Client... " + portID);
+                                    serverReaderThread = serverReaderThreadCode();
+                                    socket = serverSocket.accept();
+                                    connectionJLabel.setText("Connected to the Client" + portID);
+                                    serverReaderThread.start();
+                                } else {
+                                    connectionJLabel.setText("Waiting for connect to the Server... " + portID);
+                                    socket = new Socket(ipAddres, portID);
+                                    clientReaderThread = clientReaderThreadCode();
+                                    clientReaderThread.start();
+                                    connectionJLabel.setText("Connected to the Server" + portID);
+                                }
+                            } catch (Exception e) {
+                                System.out.println(e);
+                            }
 
                         }
                     }
@@ -243,7 +264,6 @@ class MySocketChattingSoftware {
                                 reciverPanel = new JPanel();
                                 reciverTextArea = new JTextArea();
                                 Border blackline = BorderFactory.createLineBorder(Color.black);
-                                // reciverPanel.setLayout(new BoxLayout(lisJPanel, BoxLayout.Y_AXIS));
                                 reciverTextArea.setText("\n" + message + "\n");
                                 reciverTextArea.setEditable(false);
                                 reciverTextArea.setLineWrap(true);
@@ -251,6 +271,7 @@ class MySocketChattingSoftware {
                                 // reciverTextArea.setBackground(new Color(66, 152, 95));
                                 reciverTextArea.setAlignmentY(0);
                                 reciverTextArea.setSize(500, 700);
+                                reciverPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                                 reciverPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
                                 reciverTextArea.setBorder(blackline);
                                 reciverPanel.add(reciverTextArea, BorderLayout.CENTER);
@@ -267,13 +288,12 @@ class MySocketChattingSoftware {
                 };
             }
 
-            void serverWriterSender() {
+            void serverWriterSenderMessage() {
                 try {
                     dOutput.writeUTF(textArea.getText());
                     dOutput.flush();
                     senderPanel = new JPanel();
                     Border blackline = BorderFactory.createLineBorder(Color.black);
-                    // senderPanel.setLayout(new BoxLayout(lisJPanel, BoxLayout.Y_AXIS));
                     senderTextArea = new JTextArea("\n" + textArea.getText() + "\n");
                     senderTextArea.setEditable(false);
                     senderTextArea.setLineWrap(true);
@@ -281,6 +301,7 @@ class MySocketChattingSoftware {
                     senderTextArea.setBackground(new Color(66, 152, 95));
                     senderTextArea.setAlignmentY(0);
                     senderTextArea.setSize(500, 700);
+                    senderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
                     senderPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
                     senderTextArea.setBorder(blackline);
                     senderPanel.add(senderTextArea, BorderLayout.CENTER);
@@ -305,14 +326,13 @@ class MySocketChattingSoftware {
                                 reciverPanel = new JPanel();
                                 reciverTextArea = new JTextArea();
                                 Border blackline = BorderFactory.createLineBorder(Color.black);
-                                // reciverPanel.setLayout(new BoxLayout(lisJPanel, BoxLayout.Y_AXIS));
                                 reciverTextArea.setText("\n" + message + "\n");
                                 reciverTextArea.setEditable(false);
                                 reciverTextArea.setLineWrap(true);
                                 reciverTextArea.setVisible(true);
-                                // reciverTextArea.setBackground(new Color(66, 152, 95));
                                 reciverTextArea.setAlignmentY(0);
                                 reciverTextArea.setSize(500, 700);
+                                reciverPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                                 reciverPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
                                 reciverTextArea.setBorder(blackline);
                                 reciverPanel.add(reciverTextArea, BorderLayout.CENTER);
