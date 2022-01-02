@@ -19,7 +19,7 @@ class WriteIP {
 
     // It is for write Users IP's List
     WriteIP() throws IOException {
-        File file = new File("usersIPAddress.txt");
+        File file = new File("C:\\Users\\Nagendra\\AppData\\Local\\MySocketChattingSoftware\\usersIPAddress.txt");
         FileWriter writer = new FileWriter(file);
         String[] str = s.split(", ");
         for (int i = 0; i < str.length; i++) {
@@ -48,7 +48,7 @@ class MySocketChattingSoftware {
     private ArrayList<JButton> usersButtonList = new ArrayList<JButton>();
     JPanel chatBox;
     JFrame mainFrame;
-    int minPortID = 49152;
+    int minPortID = 50000;
 
     // Creating Interface
     interface myInterface {
@@ -62,8 +62,10 @@ class MySocketChattingSoftware {
     MySocketChattingSoftware() {
         // Reading the Users IP & PortNumber usersIPAddress.txt
         try {
-            File file = new File("usersIPAddress.txt");
-            if (!file.exists()) {
+            File file = new File("C:\\Users\\Nagendra\\AppData\\Local\\MySocketChattingSoftware\\usersIPAddress.txt");
+            if (!file.exists())
+                file.getParentFile().mkdirs();
+            if (file.length() == 0) {
                 WriteIP writeIP = new WriteIP();
                 System.out.println("Users File created");
             }
@@ -81,6 +83,7 @@ class MySocketChattingSoftware {
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        mainFrame.setMinimumSize(new Dimension(900,600));
         // Users IP&PortNumber List
         for (int i = 0; i < usersIPList.size(); i++) {
             JPanel jp = myChatBoxContainer(i, usersIPList.get(i).ipAddress, usersIPList.get(i).portNumber);
@@ -89,6 +92,7 @@ class MySocketChattingSoftware {
         }
         // Main Chat Box
         chatBox = usersChat.get(0);
+        mainFrame.pack();
         for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
             JButton userIPButton = new JButton(usersIPList.get(i).ipAddress + " " + usersIPList.get(i).portNumber);
@@ -145,7 +149,8 @@ class MySocketChattingSoftware {
         JPanel bottomBar = new JPanel();
         bottomBar.setBackground(new Color(91, 154, 212));
         bottomBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JTextArea textArea = new JTextArea(3, 60);
+        JTextArea textArea = new JTextArea(4,50);
+        //bottomBar.pack();
         textArea.setLineWrap(true);
         textArea.setEditable(true);
         textArea.setVisible(true);
@@ -354,7 +359,8 @@ class MySocketChattingSoftware {
         };
 
         JButton jButton = new JButton(" Send ");
-        jButton.setBounds(50, 100, 95, 30);
+        //jButton.setBounds(50, 100, 95, 70);
+        jButton.setBounds(100, 100, 100, 80);
         jButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (textArea.getText() != "" && textArea.getText() != " ")
