@@ -85,6 +85,7 @@ class MySocketChattingSoftware {
         } catch (Exception e) {
             System.out.println(e);
         }
+        currentUser = usersIPList.get(0).portNumber;
         // Main Frame
         mainFrame = new JFrame("My Chating Software (Devloped By M.Nagendra)");
         mainFrame.setLayout(new BorderLayout());
@@ -103,7 +104,7 @@ class MySocketChattingSoftware {
         mainFrame.pack();
         for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
-            String current=usersIPList.get(i).ipAddress;
+            String current = usersIPList.get(i).ipAddress;
             if (!myIP.equals(current)) {
                 JButton userIPButton = new JButton(usersIPList.get(i).ipAddress + " " + usersIPList.get(i).portNumber);
                 userIPButton.addActionListener(new ActionListener() {
@@ -116,12 +117,12 @@ class MySocketChattingSoftware {
                     }
                 });
                 usersButtonList.add(userIPButton);
-            }else{
-                myPortNumber=usersIPList.get(i).portNumber;
+            } else {
+                myPortNumber = usersIPList.get(i).portNumber;
             }
             minPortID++;
         }
-        System.out.println(myName+" = "+myIP+" : "+myPortNumber);
+        System.out.println(myName + " = " + myIP + " : " + myPortNumber);
 
         JPanel sideBar = sideBarContainer();
         mainFrame.add(sideBar, BorderLayout.WEST); // NORTH, SOUTH, CENTER, WEST, EAST
@@ -141,7 +142,6 @@ class MySocketChattingSoftware {
         scroll.setPreferredSize(new Dimension((int) (screenSize.width / 6.5), (int) (screenSize.height / 1.05)));
 
         usersList.setLayout(new BoxLayout(usersList, BoxLayout.Y_AXIS));
-        //System.out.println(usersButtonList.size());
         for (int i = 0; i < usersButtonList.size(); i++) {
             usersList.add(usersButtonList.get(i));
         }
@@ -201,7 +201,7 @@ class MySocketChattingSoftware {
                 connectionThread.stop();
                 connectionJLabel.setText(" Disconnected... ");
                 disconnectFlag = false;
-                serverFlag = !serverFlag;
+                serverFlag = false;
             };
 
             public void sendMessage() {
@@ -214,48 +214,32 @@ class MySocketChattingSoftware {
                     public void run() {
                         try {
                             if (serverFlag == true) {
-                                serverSocket = new ServerSocket(myPortNumber);
+                                serverSocket = new ServerSocket(portID);
                                 connectionJLabel.setText("Waiting for connect to the Client... " + portID);
                                 serverReaderThread = serverReaderThreadCode();
                                 socket = serverSocket.accept();
                                 connectionJLabel.setText("Connected to the Client" + portID);
                                 serverReaderThread.start();
                             } else {
-                                connectionJLabel.setText("Waiting for connect to the Server... " + portID);
-                                socket = new Socket(myIP, portID);
+                                connectionJLabel.setText(
+                                        "Waiting for connect to the Server... " + ipAddres + " " + myPortNumber);
+                                // socket = new Socket(myIP, portID);
+                                socket = new Socket(ipAddres, myPortNumber);
                                 clientReaderThread = clientReaderThreadCode();
                                 clientReaderThread.start();
-                                connectionJLabel.setText("Connected to the Server" + portID);
+                                connectionJLabel.setText("Connected to the Server" + ipAddres + " " + myPortNumber);
                             }
                         } catch (Exception ex) {
                             System.out.println(ex);
                             serverFlag = !serverFlag;
-                            // connectionJLabel.setText("Try again to connecte... " + portID);
-                            try {
-                                if (serverFlag == true) {
-                                    serverSocket = new ServerSocket(portID);
-                                    connectionJLabel.setText("Waiting for connect to the Client... " + portID);
-                                    serverReaderThread = serverReaderThreadCode();
-                                    socket = serverSocket.accept();
-                                    connectionJLabel.setText("Connected to the Client" + portID);
-                                    serverReaderThread.start();
-                                } else {
-                                    connectionJLabel.setText("Waiting for connect to the Server... " + portID);
-                                    socket = new Socket(ipAddres, portID);
-                                    clientReaderThread = clientReaderThreadCode();
-                                    clientReaderThread.start();
-                                    connectionJLabel.setText("Connected to the Server" + portID);
-                                }
-                            } catch (Exception e) {
-                                System.out.println(e);
-                            }
-
+                            interrupt();
+                            connectionJLabel.setText("Try again to connecte... " + ipAddres);
                         }
                     }
 
                     public void interrupt() {
                         try {
-                            connectionJLabel.setText(" Disconnected... ");
+
                             if (socket != null) {
                                 socket.close();
                                 dInput.close();
@@ -265,6 +249,7 @@ class MySocketChattingSoftware {
                                 serverSocket.close();
                             if (serverReaderThread.isAlive())
                                 serverReaderThread.stop();
+                            connectionJLabel.setText(" Disconnected... ");
                         } catch (Exception e) {
                             System.out.println(e);
                         }
