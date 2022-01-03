@@ -24,7 +24,8 @@ class WriteIP {
         FileWriter writer = new FileWriter(file);
         String[] str = s.split(", ");
         for (int i = 0; i < str.length; i++) {
-            writer.write(str[0] + " " + minPortID + "\n");
+            writer.write("  " + "System_" + i + "  " + "%/%" + "  " + str[i] + "  " + "%/%" + "  " + minPortID + "  "
+                    + "\n");
             writer.flush();
             minPortID++;
         }
@@ -34,21 +35,24 @@ class WriteIP {
 }
 
 class Users {
+    String userName;
     String ipAddress;
     int portNumber;
 
-    Users(String ip, int i) {
+    Users(String name, String ip, int i) {
+        this.userName = name;
         this.ipAddress = ip;
         this.portNumber = i;
     }
 }
 
-class MySocketChattingSoftware {
+public class MySocketChattingSoftware {
     ArrayList<Users> usersIPList = new ArrayList<Users>();
     private ArrayList<JPanel> usersChat = new ArrayList<JPanel>();
     private ArrayList<JButton> usersButtonList = new ArrayList<JButton>();
     JPanel chatBox;
     JFrame mainFrame;
+    JPanel sideBar;
     int minPortID = 50000;
     int currentUser = 0;
     String myIP;
@@ -75,12 +79,15 @@ class MySocketChattingSoftware {
                 file.getParentFile().mkdirs();
             if (file.length() == 0) {
                 WriteIP writeIP = new WriteIP();
-                // System.out.println("Users File created");
             }
             BufferedReader br = new BufferedReader(new FileReader(file));
             String st;
             while ((st = br.readLine()) != null) {
-                usersIPList.add(new Users(st.split(" ")[0], Integer.parseInt(st.split(" ")[1])));
+                String str = st.replaceAll("\\s+", "");
+                String[] strList = str.split("%/%");
+                // usersIPList.add(new Users(st.split("%/%")[0],
+                // Integer.parseInt(st.split("%/%")[1])));
+                usersIPList.add(new Users(strList[0], strList[1], Integer.parseInt(strList[2])));
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -91,22 +98,22 @@ class MySocketChattingSoftware {
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        mainFrame.pack();
         mainFrame.setMinimumSize(new Dimension(900, 600));
         // Users IP&PortNumber List
         for (int i = 0; i < usersIPList.size(); i++) {
-            JPanel jp = myChatBoxContainer(i, usersIPList.get(i).ipAddress, usersIPList.get(i).portNumber);
+            JPanel jp = myChatBoxContainer(i, usersIPList.get(i).userName, usersIPList.get(i).ipAddress,
+                    usersIPList.get(i).portNumber);
             minPortID++;
             usersChat.add(jp);
         }
         // Main Chat Box
         chatBox = usersChat.get(0);
-        mainFrame.pack();
         for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
             String current = usersIPList.get(i).ipAddress;
             if (!myIP.equals(current)) {
-                JButton userIPButton = new JButton(usersIPList.get(i).ipAddress + " " + usersIPList.get(i).portNumber);
+                JButton userIPButton = new JButton(usersIPList.get(i).userName);
                 userIPButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         mainFrame.remove(chatBox);
@@ -114,6 +121,7 @@ class MySocketChattingSoftware {
                         mainFrame.add(chatBox, BorderLayout.CENTER);
                         mainFrame.validate();
                         mainFrame.repaint();
+                        currentUser = j;
                     }
                 });
                 usersButtonList.add(userIPButton);
@@ -122,9 +130,10 @@ class MySocketChattingSoftware {
             }
             minPortID++;
         }
-        System.out.println(myName + " = " + myIP + " : " + myPortNumber);
-
-        JPanel sideBar = sideBarContainer();
+        // System.out.println(myName + " = " + myIP + " : " + myPortNumber);
+        if (myPortNumber == 0)
+            myPortNumber = 50000;
+        sideBar = sideBarContainer();
         mainFrame.add(sideBar, BorderLayout.WEST); // NORTH, SOUTH, CENTER, WEST, EAST
         mainFrame.add(chatBox, BorderLayout.CENTER);
         mainFrame.setVisible(true);
@@ -133,25 +142,37 @@ class MySocketChattingSoftware {
     public JPanel sideBarContainer() {
         JPanel sideBar = new JPanel();
         JPanel usersList = new JPanel();
-        sideBar.setLayout(new BorderLayout());
+        JLabel jLabel = new JLabel("Devloped by M.Nagendra");
         JScrollPane scroll = new JScrollPane();
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scroll.setBackground(new Color(131, 144, 97));
-        sideBar.setLayout(new FlowLayout());
+        sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        scroll.setPreferredSize(new Dimension((int) (screenSize.width / 6.5), (int) (screenSize.height / 1.05)));
+        scroll.setPreferredSize(new Dimension((int) (screenSize.width / 6.5), (int) (screenSize.height / 1.15)));
 
         usersList.setLayout(new BoxLayout(usersList, BoxLayout.Y_AXIS));
         for (int i = 0; i < usersButtonList.size(); i++) {
-            usersList.add(usersButtonList.get(i));
+            JPanel jPanel = new JPanel();
+            jPanel.setMaximumSize(new Dimension(200, 40));
+            Border blackline = BorderFactory.createLineBorder(Color.BLACK);
+            jPanel.setBorder(blackline);
+            // jPanel.setBackground(Color.CYAN);
+            JButton button = usersButtonList.get(i);
+            button.setMaximumSize(new Dimension(200, 40));
+            jPanel.add(button);
+            usersList.add(jPanel);
         }
-
+        JPanel emptyJPanel = new JPanel();
+        emptyJPanel.setSize(100, 100);
         scroll.setViewportView(usersList);
-        sideBar.add(scroll, BorderLayout.CENTER);
+        sideBar.add(jLabel);
+        sideBar.add(scroll);
+        sideBar.add(emptyJPanel);
+
         return sideBar;
     }
 
-    JPanel myChatBoxContainer(int index, String ipAddres, int portID) {
+    JPanel myChatBoxContainer(int index, String userName, String ipAddres, int portID) {
+        int userIndex = index;
         JPanel chatBoxJPanel = new JPanel();
         JScrollPane scrollPane = new JScrollPane();
         JPanel statusPanel = new JPanel();
@@ -161,7 +182,6 @@ class MySocketChattingSoftware {
         JButton disconectButton = new JButton(" Disconnect ");
 
         JPanel bottomBar = new JPanel();
-        bottomBar.setBackground(new Color(91, 154, 212));
         bottomBar.setLayout(new FlowLayout(FlowLayout.LEFT));
         JTextArea textArea = new JTextArea(4, 50);
         textArea.setLineWrap(true);
@@ -170,7 +190,6 @@ class MySocketChattingSoftware {
         JScrollPane scroll = new JScrollPane(textArea);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        currentUser = index;
 
         myInterface connectionInterface = new myInterface() {
             Socket socket;
@@ -182,9 +201,9 @@ class MySocketChattingSoftware {
             JPanel reciverPanel, senderPanel;
             JTextArea reciverTextArea, senderTextArea;
             DataOutputStream dOutput = null;
+
             Thread connectionThread = new Thread();
-            Thread clientReaderThread = new Thread();
-            Thread serverReaderThread = new Thread();
+            Thread messageReaderThread = new Thread();
 
             public void connect() {
                 if (connectionThread.isAlive())
@@ -199,47 +218,55 @@ class MySocketChattingSoftware {
                 disconnectFlag = true;
                 connectionThread.interrupt();
                 connectionThread.stop();
-                connectionJLabel.setText(" Disconnected... ");
                 disconnectFlag = false;
-                serverFlag = false;
+                serverFlag = !serverFlag;
+                if (messageReaderThread.isAlive()) {
+                    messageReaderThread.interrupt();
+                    messageReaderThread.stop();
+                }
+                connectionJLabel.setText(" Disconnected...");
             };
 
             public void sendMessage() {
                 if (socket != null)
-                    serverWriterSenderMessage();
-            }
+                    messageSender();
+            };
 
             Thread connectionThreadCode() {
                 return new Thread() {
                     public void run() {
                         try {
                             if (serverFlag == true) {
+                                if (messageReaderThread.isAlive()) {
+                                    messageReaderThread.interrupt();
+                                    messageReaderThread.stop();
+                                }
                                 serverSocket = new ServerSocket(portID);
-                                connectionJLabel.setText("Waiting for connect to the Client... " + portID);
-                                serverReaderThread = serverReaderThreadCode();
+                                connectionJLabel.setText("Waiting for User get in Online... ");
+                                messageReaderThread = messageReader();
                                 socket = serverSocket.accept();
-                                connectionJLabel.setText("Connected to the Client" + portID);
-                                serverReaderThread.start();
+                                connectionJLabel.setText(userName + " is in " + "Online");
+                                messageReaderThread.start();
                             } else {
-                                connectionJLabel.setText(
-                                        "Waiting for connect to the Server... " + ipAddres + " " + myPortNumber);
-                                // socket = new Socket(myIP, portID);
+                                if (messageReaderThread.isAlive()) {
+                                    messageReaderThread.interrupt();
+                                    messageReaderThread.stop();
+                                }
+                                connectionJLabel.setText("Searching for User connection...");
                                 socket = new Socket(ipAddres, myPortNumber);
-                                clientReaderThread = clientReaderThreadCode();
-                                clientReaderThread.start();
-                                connectionJLabel.setText("Connected to the Server" + ipAddres + " " + myPortNumber);
+                                messageReaderThread = messageReader();
+                                messageReaderThread.start();
+                                connectionJLabel.setText(userName + " is in " + "Online");
                             }
                         } catch (Exception ex) {
                             System.out.println(ex);
                             serverFlag = !serverFlag;
                             interrupt();
-                            connectionJLabel.setText("Try again to connecte... " + ipAddres);
                         }
                     }
 
                     public void interrupt() {
                         try {
-
                             if (socket != null) {
                                 socket.close();
                                 dInput.close();
@@ -247,17 +274,48 @@ class MySocketChattingSoftware {
                             }
                             if (serverSocket != null)
                                 serverSocket.close();
-                            if (serverReaderThread.isAlive())
-                                serverReaderThread.stop();
-                            connectionJLabel.setText(" Disconnected... ");
+                            socket = null;
+                            serverSocket = null;
+
+                            if (messageReaderThread.isAlive()) {
+                                messageReaderThread.interrupt();
+                                messageReaderThread.stop();
+                            }
+                            connectionJLabel.setText("( Offline or Disconnected ) Try again...");
                         } catch (Exception e) {
                             System.out.println(e);
                         }
                     }
                 };
-            }
+            };
 
-            Thread serverReaderThreadCode() {
+            void messageSender() {
+                try {
+                    dOutput.writeUTF(textArea.getText());
+                    dOutput.flush();
+                    senderPanel = new JPanel();
+                    Border blackline = BorderFactory.createLineBorder(Color.BLACK);
+                    senderTextArea = new JTextArea("\n" + textArea.getText() + "\n");
+                    senderTextArea.setEditable(false);
+                    senderTextArea.setLineWrap(true);
+                    senderTextArea.setVisible(true);
+                    senderTextArea.setAlignmentY(0);
+                    senderTextArea.setSize(500, 700);
+                    senderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
+                    senderPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+                    senderTextArea.setBorder(blackline);
+                    senderPanel.add(senderTextArea, BorderLayout.CENTER);
+                    chatContainer.add(senderPanel);
+                    chatContainer.revalidate();
+                    chatContainer.repaint();
+                    textArea.setText("");
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            };
+
+            Thread messageReader() {
                 return new Thread() {
                     public void run() {
                         try {
@@ -280,74 +338,11 @@ class MySocketChattingSoftware {
                                 reciverTextArea.setBorder(blackline);
                                 reciverPanel.add(reciverTextArea, BorderLayout.CENTER);
                                 chatContainer.add(reciverPanel);
-                                if (currentUser == index) {
-                                    usersButtonList.get(currentUser).setBackground(new Color(66, 152, 95));
-                                }
                                 chatContainer.revalidate();
                                 chatContainer.repaint();
                             }
                             dInput.close();
-                            serverSocket.close();
-                        } catch (Exception e) {
-                            System.out.println(e);
-                        }
-                    }
-                };
-            }
-
-            void serverWriterSenderMessage() {
-                try {
-                    dOutput.writeUTF(textArea.getText());
-                    dOutput.flush();
-                    senderPanel = new JPanel();
-                    Border blackline = BorderFactory.createLineBorder(Color.black);
-                    senderTextArea = new JTextArea("\n" + textArea.getText() + "\n");
-                    senderTextArea.setEditable(false);
-                    senderTextArea.setLineWrap(true);
-                    senderTextArea.setVisible(true);
-                    senderTextArea.setBackground(new Color(66, 152, 95));
-                    senderTextArea.setAlignmentY(0);
-                    senderTextArea.setSize(500, 700);
-                    senderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
-                    senderPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-                    senderTextArea.setBorder(blackline);
-                    senderPanel.add(senderTextArea, BorderLayout.CENTER);
-                    chatContainer.add(senderPanel);
-                    chatContainer.revalidate();
-                    chatContainer.repaint();
-                    textArea.setText("");
-                } catch (Exception e) {
-                    System.out.println(e);
-                }
-
-            }
-
-            Thread clientReaderThreadCode() {
-                return new Thread() {
-                    public void run() {
-                        try {
-                            dInput = new DataInputStream(socket.getInputStream());
-                            dOutput = new DataOutputStream(socket.getOutputStream());
-                            while (!disconnectFlag) {
-                                message = dInput.readUTF();
-                                reciverPanel = new JPanel();
-                                reciverTextArea = new JTextArea();
-                                Border blackline = BorderFactory.createLineBorder(Color.black);
-                                reciverTextArea.setText("\n" + message + "\n");
-                                reciverTextArea.setEditable(false);
-                                reciverTextArea.setLineWrap(true);
-                                reciverTextArea.setVisible(true);
-                                reciverTextArea.setAlignmentY(0);
-                                reciverTextArea.setSize(500, 700);
-                                reciverPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                                reciverPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-                                reciverTextArea.setBorder(blackline);
-                                reciverPanel.add(reciverTextArea, BorderLayout.CENTER);
-                                chatContainer.add(reciverPanel);
-                                chatContainer.revalidate();
-                                chatContainer.repaint();
-                            }
-                            dInput.close();
+                            dOutput.close();
                             socket.close();
                         } catch (Exception e) {
                             System.out.println(e);
@@ -355,9 +350,25 @@ class MySocketChattingSoftware {
                             connectionThread.stop();
                         }
                     }
-                };
-            }
 
+                    public void interrupt() {
+                        try {
+                            if (socket != null) {
+                                socket.close();
+                                dInput.close();
+                                dOutput.close();
+                            }
+                            if (serverSocket != null)
+                                serverSocket.close();
+                            socket = null;
+                            serverSocket = null;
+                            connectionJLabel.setText("Disconnected...");
+                        } catch (Exception e) {
+                            System.out.println(e);
+                        }
+                    }
+                };
+            };
         };
 
         JButton jButton = new JButton(" Send ");
@@ -371,25 +382,21 @@ class MySocketChattingSoftware {
         bottomBar.add(scroll);
         bottomBar.add(jButton);
 
-        connectionJLabel.setText("ID: " + portID);
-        scrollPane.setBackground(new Color(66, 152, 95));
+        connectionJLabel.setText(userName + " /port:" + portID);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         chatBoxJPanel.setPreferredSize(new Dimension((int) (screenSize.width / 1.3), (int) (screenSize.height / 1.2)));
         chatContainer.setLayout(new BoxLayout(chatContainer, BoxLayout.Y_AXIS));
-        chatContainer.setBackground(new Color(66, 152, 95));
         scrollPane.setViewportView(chatContainer);
         chatBoxJPanel.setLayout(new BorderLayout());
         conectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                connectionJLabel.setText(" Connected... " + index);
                 connectionInterface.connect();
             }
         });
 
         disconectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                connectionJLabel.setText(" Disconnected... " + index);
                 connectionInterface.disConnect();
             }
         });
