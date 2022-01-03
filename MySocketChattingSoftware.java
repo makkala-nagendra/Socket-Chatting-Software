@@ -94,7 +94,7 @@ public class MySocketChattingSoftware {
         }
         currentUser = usersIPList.get(0).portNumber;
         // Main Frame
-        mainFrame = new JFrame("My Chating Software (Devloped By M.Nagendra)");
+        mainFrame = new JFrame("Socket Chating Software");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,12 +142,12 @@ public class MySocketChattingSoftware {
     public JPanel sideBarContainer() {
         JPanel sideBar = new JPanel();
         JPanel usersList = new JPanel();
-        JLabel jLabel = new JLabel("Devloped by M.Nagendra");
+        JLabel jLabel = new JLabel("<html><h3>"+"Devloped By M.Nagendra"+"</h3></html>");
         JScrollPane scroll = new JScrollPane();
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        scroll.setPreferredSize(new Dimension((int) (screenSize.width / 6.5), (int) (screenSize.height / 1.15)));
+        scroll.setPreferredSize(new Dimension((int) (screenSize.width /8), (int) (screenSize.height / 1.15)));
 
         usersList.setLayout(new BoxLayout(usersList, BoxLayout.Y_AXIS));
         for (int i = 0; i < usersButtonList.size(); i++) {
