@@ -89,7 +89,8 @@ public class MySocketChattingSoftware {
                 String[] strList = str.split("%/%");
                 // usersIPList.add(new Users(st.split("%/%")[0],
                 // Integer.parseInt(st.split("%/%")[1])));
-                usersIPList.add(new Users(strList[0], strList[1], Integer.parseInt(strList[2])));
+                usersIPList.add(new Users(strList[1], strList[0], Integer.parseInt(strList[2])));
+                System.out.println(strList[2]);
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -114,6 +115,7 @@ public class MySocketChattingSoftware {
         for (int i = 0; i < usersIPList.size(); i++) {
             int j = i;
             String current = usersIPList.get(i).ipAddress;
+            System.out.println(current);
             if (!myIP.equals(current)) {
                 JButton userIPButton = new JButton(usersIPList.get(i).userName);
                 userIPButton.addActionListener(new ActionListener() {
@@ -129,10 +131,13 @@ public class MySocketChattingSoftware {
                 usersButtonList.add(userIPButton);
             } else {
                 myPortNumber = usersIPList.get(i).portNumber;
+                System.out.println(myName + " = " + current + " : " + myPortNumber);
             }
             minPortID++;
         }
-        // System.out.println(myName + " = " + myIP + " : " + myPortNumber);
+
+        System.out.println(myName + " = " + myIP + " : " + myPortNumber);
+        
         if (myPortNumber == 0)
             myPortNumber = 50000;
         sideBar = sideBarContainer();
