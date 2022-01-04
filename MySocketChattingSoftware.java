@@ -10,6 +10,8 @@ import java.util.*;
 import java.io.*;
 import javax.swing.border.*;
 import java.net.*;
+import java.awt.*;
+import java.awt.geom.*;
 
 class WriteIP {
     int minPortID = 50000;
@@ -94,7 +96,7 @@ public class MySocketChattingSoftware {
         }
         currentUser = usersIPList.get(0).portNumber;
         // Main Frame
-        mainFrame = new JFrame("Socket Chating Software");
+        mainFrame = new JFrame("Chatting Software");
         mainFrame.setLayout(new BorderLayout());
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -142,12 +144,12 @@ public class MySocketChattingSoftware {
     public JPanel sideBarContainer() {
         JPanel sideBar = new JPanel();
         JPanel usersList = new JPanel();
-        JLabel jLabel = new JLabel("<html><h3>"+"Devloped By M.Nagendra"+"</h3></html>");
+        JLabel jLabel = new JLabel("<html><h3>" + "Devloped By M.Nagendra" + "</h3></html>");
         JScrollPane scroll = new JScrollPane();
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.Y_AXIS));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        scroll.setPreferredSize(new Dimension((int) (screenSize.width /8), (int) (screenSize.height / 1.15)));
+        scroll.setPreferredSize(new Dimension((int) (screenSize.width / 8), (int) (screenSize.height / 1.15)));
 
         usersList.setLayout(new BoxLayout(usersList, BoxLayout.Y_AXIS));
         for (int i = 0; i < usersButtonList.size(); i++) {
@@ -294,8 +296,9 @@ public class MySocketChattingSoftware {
                     dOutput.writeUTF(textArea.getText());
                     dOutput.flush();
                     senderPanel = new JPanel();
-                    Border blackline = BorderFactory.createLineBorder(Color.BLACK);
-                    senderTextArea = new JTextArea("\n" + textArea.getText() + "\n");
+                    // Border blackline = BorderFactory.createLineBorder(Color.BLACK);
+                    AbstractBorder border = new TextBubbleBorder(Color.BLACK, 2, 16, 0);
+                    senderTextArea = new JTextArea(textArea.getText());
                     senderTextArea.setEditable(false);
                     senderTextArea.setLineWrap(true);
                     senderTextArea.setVisible(true);
@@ -303,7 +306,7 @@ public class MySocketChattingSoftware {
                     senderTextArea.setSize(500, 700);
                     senderPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));
                     senderPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-                    senderTextArea.setBorder(blackline);
+                    senderTextArea.setBorder(border);
                     senderPanel.add(senderTextArea, BorderLayout.CENTER);
                     chatContainer.add(senderPanel);
                     chatContainer.revalidate();
@@ -325,8 +328,9 @@ public class MySocketChattingSoftware {
                                 message = dInput.readUTF();
                                 reciverPanel = new JPanel();
                                 reciverTextArea = new JTextArea();
-                                Border blackline = BorderFactory.createLineBorder(Color.black);
-                                reciverTextArea.setText("\n" + message + "\n");
+                                // Border blackline = BorderFactory.createLineBorder(Color.black);
+                                AbstractBorder border = new TextBubbleBorder(Color.BLACK, 2, 16, 0);
+                                reciverTextArea.setText(message);
                                 reciverTextArea.setEditable(false);
                                 reciverTextArea.setLineWrap(true);
                                 reciverTextArea.setVisible(true);
@@ -335,7 +339,7 @@ public class MySocketChattingSoftware {
                                 reciverTextArea.setSize(500, 700);
                                 reciverPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                                 reciverPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-                                reciverTextArea.setBorder(blackline);
+                                reciverTextArea.setBorder(border);
                                 reciverPanel.add(reciverTextArea, BorderLayout.CENTER);
                                 chatContainer.add(reciverPanel);
                                 chatContainer.revalidate();
@@ -417,5 +421,84 @@ public class MySocketChattingSoftware {
                 new MySocketChattingSoftware();
             }
         });
+    }
+}
+
+class TextBubbleBorder extends AbstractBorder {
+
+    private Color color;
+    private int thickness = 4;
+    private int radii = 8;
+    private int pointerSize = 7;
+    private Insets insets = null;
+    private BasicStroke stroke = null;
+    private int strokePad;
+    private int pointerPad = 4;
+    RenderingHints hints;
+
+    TextBubbleBorder(
+            Color color) {
+        new TextBubbleBorder(color, 4, 8, 7);
+    }
+
+    TextBubbleBorder(Color color, int thickness, int radii, int pointerSize) {
+        this.thickness = thickness;
+        this.radii = radii;
+        this.pointerSize = pointerSize;
+        this.color = color;
+
+        stroke = new BasicStroke(thickness);
+        strokePad = thickness / 2;
+
+        hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        int pad = radii + strokePad;
+        int bottomPad = pad + pointerSize + strokePad;
+        insets = new Insets(pad, pad, bottomPad, pad);
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return insets;
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c, Insets insets) {
+        return getBorderInsets(c);
+    }
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+
+        Graphics2D g2 = (Graphics2D) g;
+
+        int bottomLineY = height - thickness - pointerSize;
+
+        RoundRectangle2D.Double bubble = new RoundRectangle2D.Double(0 + strokePad, 0 + strokePad, width - thickness,
+                bottomLineY, radii, radii);
+
+        Polygon pointer = new Polygon();
+
+        // left point
+        pointer.addPoint(strokePad + radii + pointerPad, bottomLineY);
+        // right point
+        pointer.addPoint(strokePad + radii + pointerPad + pointerSize, bottomLineY);
+        // bottom point
+        pointer.addPoint(strokePad + radii + pointerPad + (pointerSize / 2), height - strokePad);
+
+        Area area = new Area(bubble);
+        area.add(new Area(pointer));
+
+        g2.setRenderingHints(hints);
+
+        Area spareSpace = new Area(new Rectangle(0, 0, width, height));
+        spareSpace.subtract(area);
+        g2.setClip(spareSpace);
+        g2.clearRect(0, 0, width, height);
+        g2.setClip(null);
+
+        g2.setColor(color);
+        g2.setStroke(stroke);
+        g2.draw(area);
     }
 }
