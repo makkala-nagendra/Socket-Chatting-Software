@@ -137,7 +137,7 @@ public class MySocketChattingSoftware {
         }
 
         System.out.println(myName + " = " + myIP + " : " + myPortNumber);
-        
+
         if (myPortNumber == 0)
             myPortNumber = 50000;
         sideBar = sideBarContainer();
@@ -249,7 +249,7 @@ public class MySocketChattingSoftware {
                                     messageReaderThread.stop();
                                 }
                                 serverSocket = new ServerSocket(portID);
-                                connectionJLabel.setText("Waiting for "+userName+" get in Online...");
+                                connectionJLabel.setText("Waiting for " + userName + " get in Online...");
                                 messageReaderThread = messageReader();
                                 socket = serverSocket.accept();
                                 connectionJLabel.setText(userName + " is in " + "Online");
@@ -259,7 +259,7 @@ public class MySocketChattingSoftware {
                                     messageReaderThread.interrupt();
                                     messageReaderThread.stop();
                                 }
-                                connectionJLabel.setText("Searching for "+userName+" connection...");
+                                connectionJLabel.setText("Searching for " + userName + " connection...");
                                 socket = new Socket(ipAddres, myPortNumber);
                                 messageReaderThread = messageReader();
                                 messageReaderThread.start();
