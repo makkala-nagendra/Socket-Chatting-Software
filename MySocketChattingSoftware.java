@@ -96,6 +96,7 @@ public class MySocketChattingSoftware {
             System.out.println(e);
         }
         currentUser = usersIPList.get(0).portNumber;
+        AbstractBorder border = new TextBubbleBorder(Color.BLACK, 2, 16, 0);
         // Main Frame
         mainFrame = new JFrame("Chatting Software");
         mainFrame.setLayout(new BorderLayout());
@@ -118,6 +119,7 @@ public class MySocketChattingSoftware {
             System.out.println(current);
             if (!myIP.equals(current)) {
                 JButton userIPButton = new JButton(usersIPList.get(i).userName);
+                userIPButton.setBorder(border);
                 userIPButton.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent event) {
                         mainFrame.remove(chatBox);
@@ -158,11 +160,8 @@ public class MySocketChattingSoftware {
 
         usersList.setLayout(new BoxLayout(usersList, BoxLayout.Y_AXIS));
         for (int i = 0; i < usersButtonList.size(); i++) {
-            JPanel jPanel = new JPanel();
-            jPanel.setMaximumSize(new Dimension(200, 40));
-            Border blackline = BorderFactory.createLineBorder(Color.BLACK);
-            jPanel.setBorder(blackline);
-            // jPanel.setBackground(Color.CYAN);
+            JPanel jPanel = new JPanel(new GridLayout(1, 1));
+            jPanel.setMaximumSize(new Dimension(250, 50));
             JButton button = usersButtonList.get(i);
             button.setMaximumSize(new Dimension(200, 40));
             jPanel.add(button);
@@ -381,8 +380,10 @@ public class MySocketChattingSoftware {
             };
         };
 
+        AbstractBorder border = new TextBubbleBorder(Color.BLACK, 2, 16, 0);
         JButton jButton = new JButton(" Send ");
         jButton.setBounds(100, 100, 100, 80);
+        jButton.setBorder(border);
         jButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (textArea.getText() != "" && textArea.getText() != " ")
