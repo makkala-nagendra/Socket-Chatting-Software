@@ -232,7 +232,7 @@ public class MySocketChattingSoftware {
                     messageReaderThread.interrupt();
                     messageReaderThread.stop();
                 }
-                connectionJLabel.setText(" Disconnected...");
+                connectionJLabel.setText(" Disconnected");
             };
 
             public void sendMessage() {
