@@ -273,7 +273,6 @@ public class MySocketChattingSoftware {
                             serverFlag = !serverFlag;
                             interrupt();
                             usersButtonList.get(index).setBackground(Color.LIGHT_GRAY);
-                            run();
                         }
                     }
 
