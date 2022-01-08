@@ -324,6 +324,7 @@ public class MySocketChattingSoftware {
                     textArea.setText("");
                 } catch (Exception e) {
                     System.out.println(e);
+                    usersButtonList.get(index).setBackground(Color.LIGHT_GRAY);
                 }
 
             };
@@ -362,6 +363,7 @@ public class MySocketChattingSoftware {
                             System.out.println(e);
                             connectionThread.interrupt();
                             connectionThread.stop();
+                            usersButtonList.get(index).setBackground(Color.LIGHT_GRAY);
                         }
                     }
 
