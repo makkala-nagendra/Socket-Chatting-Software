@@ -2,7 +2,8 @@
 ## To run this program JDK 17 is requered
 
 ### ScreenShots
-<img src="/ScreenShots/Screenshot_1.png" alt="">
 <img src="/ScreenShots/Screenshot_2.png" alt="">
-### IP addresses, Name of the system, Port Number file location
+<img src="/ScreenShots/Screenshot_1.png" alt="">
+
+### Name of the systems, IP addresses, Port Numbers file location
 <img src="/ScreenShots/Screenshot_4.png" alt="">
