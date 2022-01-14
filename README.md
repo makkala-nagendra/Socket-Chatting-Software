@@ -3,6 +3,6 @@
 
 ### ScreenShots
 
-| <img src="/ScreenShots/Screenshot_1.png" width="300" alt=""> | <img src="/ScreenShots/Screenshot_2.png" width="300" alt=""> |
-| --- |--- |
-
+| <img src="/ScreenShots/Screenshot_1.png" alt=""> |
+| --- |
+| <img src="/ScreenShots/Screenshot_2.png" alt=""> |
