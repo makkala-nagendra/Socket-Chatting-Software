@@ -1,3 +1,9 @@
 # Socket-Chatting-Software
 ## To run this program JDK 17 is requered
-## exe file for this software link: https://drive.google.com/drive/folders/1da3-W5-y5CDuCdlnpXjQ3jpuzwpof_Xh?usp=sharing
+
+### ScreenShots
+
+| <img src="/screenshot/Screenshot_20211016-121720.jpeg" width="300" alt=""> | <img src="/screenshot/Screenshot_20211016-121724.jpeg" width="300" alt=""> |
+| --- |--- |
+| <img src="/screenshot/Screenshot_20211016-121720.jpeg" width="300" alt=""> | <img src="/screenshot/Screenshot_20211016-121724.jpeg" width="300" alt=""> |
+| <img src="/screenshot/Screenshot_20211016-121720.jpeg" width="300" alt=""> | <img src="/screenshot/Screenshot_20211016-121724.jpeg" width="300" alt=""> |
